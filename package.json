@@ -1,0 +1,41 @@
+{
+  "name": "hock-fork",
+  "description": "A mocking server for HTTP requests, forked from Hock",
+  "version": "0.0.1",
+  "author": "Joachim Seminck <joachim@seminck.be>",
+  "contributors": [
+    {
+      "name": "Maciej Małecki",
+      "email": "me@mmalecki.com"
+    },
+    {
+      "name": "Ken Perkins",
+      "email": "ken.perkins@rackspace.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jseminck/hock-fork.git"
+  },
+  "keywords": [
+    "mock",
+    "http",
+    "test"
+  ],
+  "devDependencies": {
+    "mocha": "^2.1.0",
+    "request": "2.20.x",
+    "should": "^5.0.1",
+    "should-http": "0.0.2"
+  },
+  "main": "./lib/hock",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "dependencies": {
+    "deep-equal": "0.2.1"
+  }
+}
