@@ -57,6 +57,27 @@ describe('Hock HTTP Tests', function() {
       });
     });
 
+    it('does not care about the order of the keys in the body', function (done) {
+      hockInstance
+        .post('/post', { keyOne: 'value1', keyTwo: 'value2' })
+        .reply(201, { 'hock': 'created' });
+
+      request({
+        uri: 'http://localhost:' + PORT + '/post',
+        method: 'POST',
+        json: {
+            keyTwo: 'value2',
+            keyOne: 'value1'
+        }
+      }, function (err, res, body) {
+        should.not.exist(err);
+        should.exist(res);
+        res.statusCode.should.equal(201);
+        body.should.eql({ 'hock': 'created' });
+        done();
+      });
+    });
+
     it('should correctly respond to an HTTP PUT request', function (done) {
       hockInstance
         .put('/put', { 'hock': 'put' })
