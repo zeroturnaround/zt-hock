@@ -23,6 +23,9 @@
     "test"
   ],
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.0.0",
+    "eslint-config-zt": "^1.4.0",
     "mocha": "^2.1.0",
     "request": "2.20.x",
     "should": "^5.0.1",
@@ -30,7 +33,8 @@
   },
   "main": "./lib/hock",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=0.8.x"
