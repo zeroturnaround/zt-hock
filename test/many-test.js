@@ -1,9 +1,9 @@
-let http = require('http'),
-    should = require('should'),
-    request = require('request'),
-    util = require('util'),
-    crypto = require('crypto'),
-    hock = require('../');
+const http = require('http');
+const should = require('should');
+const request = require('request');
+const util = require('util');
+const crypto = require('crypto');
+const hock = require('../');
 
 const PORT = 5678;
 

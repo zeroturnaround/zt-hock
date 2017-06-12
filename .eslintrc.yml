@@ -1,2 +1,5 @@
 extends:
   - "zt/base"
+
+env:
+  mocha: true

@@ -1,11 +1,10 @@
-let Request = require('../lib/request'),
-    should = require('should');
+const Request = require('../lib/request');
 
 describe('Request unit tests', function() {
     describe("matching", function() {
 
         it('should work with defined headers in the incoming request', function() {
-            const request = new Request(new Object(), {
+            const request = new Request({}, {
                 method: 'GET',
                 url: '/lowercasetest',
                 headers: { 'foo-type': 'artischocke' }
@@ -19,7 +18,7 @@ describe('Request unit tests', function() {
         });
 
         it('should work with defined headers in the incoming request', function() {
-            const request = new Request(new Object(), {
+            const request = new Request({}, {
                 method: 'GET',
                 url: '/lowercasetest',
                 headers: { 'foo-type': 'artischocke' }

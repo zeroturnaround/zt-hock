@@ -1,8 +1,8 @@
-let http = require('http'),
-    should = require('should'),
-    shouldHttp = require('should-http'),
-    request = require('request'),
-    hock = require('../');
+const http = require('http');
+const should = require('should');
+const request = require('request');
+const hock = require('../');
+require('should-http');
 
 const PORT = 5678;
 
