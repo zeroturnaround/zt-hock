@@ -5,12 +5,8 @@
   "author": "Joachim Seminck <joachim@seminck.be>",
   "contributors": [
     {
-      "name": "Maciej Małecki",
-      "email": "me@mmalecki.com"
-    },
-    {
-      "name": "Ken Perkins",
-      "email": "ken.perkins@rackspace.com"
+      "name": "Joachim Seminck",
+      "email": "joachim@seminck.be"
     }
   ],
   "repository": {
