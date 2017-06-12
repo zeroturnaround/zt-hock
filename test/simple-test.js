@@ -182,6 +182,18 @@ describe('Hock HTTP Tests', function() {
             }).should.throw();
         });
 
+        it('unmatched requests should NOT throw when configured', function() {
+            const hockInstance = hock.createHock({throwOnUnprocessedRequests: false});
+
+            hockInstance
+                .head('/head')
+                .reply(200, '', { 'Content-Type': 'plain/text' });
+
+            (function() {
+                hockInstance.done();
+            }).should.not.throw();
+        });
+
         it('unmatched requests should call done callback with err', function(done) {
             hockInstance
                 .head('/head')
