@@ -1,7 +1,7 @@
 {
-  "name": "hock-fork",
+  "name": "zt-hock",
   "description": "A mocking server for HTTP requests, forked from Hock",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "author": "Joachim Seminck <joachim@seminck.be>",
   "contributors": [
     {
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/jseminck/hock-fork.git"
+    "url": "http://github.com/zeroturnaround/zt-hock.git"
   },
   "keywords": [
     "mock",
