@@ -1,0 +1,14 @@
+language: node_js
+node_js: [ 6 ]
+cache:
+    directories: [ node_modules ]
+before_deploy: >
+    node -e 'require("fs").writeFileSync("package.json", JSON.stringify(Object.assign(require("./package"), {version: process.env.TRAVIS_TAG})))'
+deploy:
+    provider: npm
+    email: npm@zeroturnaround.com
+    skip_cleanup: true
+    api_key:
+        secure: kaDTJt3L2TNDtwvqofsE0gv/6gmsumae3G+WUN7jCGJNZ9ihLAfhBwHhcTBMN68RViH0R5pz/8XlnxzgzEjE275ac69lc/T9gh03hqGWDo28bQ/oePNpWVvZUIvXpeEshmtmjO6CS9V8cXupW74lA44gFNqAOGnpqNcwrzgRKd2B58alIPpzO/f6VgVwVNw/nvH8Ru0xSPo1s2PtHUtRvxVUNXPOmUb6JUNyItbrsGP0T8HYIvP7aWLojtEkuxc2LgEtxVVeT36wzMP/dBnNKfAg0VsYqWUjQfsdaVX0xlRdF+RTrLAkNX2BodasyA82BA7LDIjLS9nXPcuHEYdO8mcN7nDQyDmmtTGmXIPAVcpMhAoAGjYWdaM8f67+6BHbC8j/nlKHFJrXoHdH15zfsBgFxSKmQ2ss+kkg/YduWdndlTz01tQibErLZNf++etG0NofZQmDz4xlqJ8SwAH4yX4ebt6DXOPLb1CscNpMliEBZvIFtwfmUA3GHPz8XcCLJuIUmc97AOFOykFkbYAK0xoMzfoOCoauV+HzKg8/43+7lbiH56BwoR/029UQm0HYBJVawGRRh3pUevNwVSzuXrq85kIH991OziMLMcp4xtH9S/OAuQTK9+P3zFvOS7x7jk4KmZOhqNE1y+eOn++jn3qv9ezcdOb2e9zeP8AxteA=
+    on:
+        tags: true
