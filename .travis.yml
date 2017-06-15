@@ -1,14 +1,16 @@
 language: node_js
-node_js: [ 6 ]
+node_js:
+- 6
 cache:
-    directories: [ node_modules ]
-before_deploy: >
-    node -e 'require("fs").writeFileSync("package.json", JSON.stringify(Object.assign(require("./package"), {version: process.env.TRAVIS_TAG})))'
+  directories:
+  - node_modules
+before_deploy: |
+  node -e 'require("fs").writeFileSync("package.json", JSON.stringify(Object.assign(require("./package"), {version: process.env.TRAVIS_TAG})))'
 deploy:
-    provider: npm
-    email: npm@zeroturnaround.com
-    skip_cleanup: true
-    api_key:
-        secure: kaDTJt3L2TNDtwvqofsE0gv/6gmsumae3G+WUN7jCGJNZ9ihLAfhBwHhcTBMN68RViH0R5pz/8XlnxzgzEjE275ac69lc/T9gh03hqGWDo28bQ/oePNpWVvZUIvXpeEshmtmjO6CS9V8cXupW74lA44gFNqAOGnpqNcwrzgRKd2B58alIPpzO/f6VgVwVNw/nvH8Ru0xSPo1s2PtHUtRvxVUNXPOmUb6JUNyItbrsGP0T8HYIvP7aWLojtEkuxc2LgEtxVVeT36wzMP/dBnNKfAg0VsYqWUjQfsdaVX0xlRdF+RTrLAkNX2BodasyA82BA7LDIjLS9nXPcuHEYdO8mcN7nDQyDmmtTGmXIPAVcpMhAoAGjYWdaM8f67+6BHbC8j/nlKHFJrXoHdH15zfsBgFxSKmQ2ss+kkg/YduWdndlTz01tQibErLZNf++etG0NofZQmDz4xlqJ8SwAH4yX4ebt6DXOPLb1CscNpMliEBZvIFtwfmUA3GHPz8XcCLJuIUmc97AOFOykFkbYAK0xoMzfoOCoauV+HzKg8/43+7lbiH56BwoR/029UQm0HYBJVawGRRh3pUevNwVSzuXrq85kIH991OziMLMcp4xtH9S/OAuQTK9+P3zFvOS7x7jk4KmZOhqNE1y+eOn++jn3qv9ezcdOb2e9zeP8AxteA=
-    on:
-        tags: true
+  provider: npm
+  email: npm@zeroturnaround.com
+  skip_cleanup: true
+  api_key:
+    secure: IbF+DgQDpmHRoGDOJ9LHJRdf/ds1Hhx4DA6NZQbK7hKkszR2Cys1pMEul8QytmtJ554xwsj7eJO1EKzEZRWujcu/qsdvTD/UWroMtCiHnyFMD7sv0q+kPHV4bseLSCTdZypVcp98hK2LycvmvedynFdUiisDNshYgxZXGfYcHN/4AQogoZaJUXXuczXQiJ2cYU0ykWI20C8P3mYAVzEn4lk9MgRT5D86IeyLPLXtKuuDZSh49E0gWB7ifOAK2Uxgtlx39L9LGBYMu7jfqewkjM6lhE5IHaJYgBEDveBwuF5pW5W905brREz95t7vmjhZPaLQxIZsmaheWsX9HQKE8srgrUmw5XTkhDBZ9uhW4Z3uDbwa/E97EA8MjeW+1uANT4AyVBRQj3i9enHs9qExbFjeHyP0EdYe6Ipwino/Pz19Ye3RS2Mn8Ln2uX4rUvSfy3blf5wcQ5uIK3RxBqTgOoyk7NMz1N6Aj/KPmAJeFu+92QjpmHKOFDy19/YTSkF3tp/ezOfeuG6ZEXZcAXk8kQye8AID6jEMtmJEblhaXCfimEveNGjLrZ8kgXpDpomL5Ath3YOXGNM5sH0qyp+8zWbyxcbklErKR0Hg6RSzMKVHzdA2aOt+liptFwAdZ7RGkQZkBVL1xScswCX72u3WNsVMhIW1p3Q7l202WwFInrE=
+  on:
+    tags: true
