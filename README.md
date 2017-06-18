@@ -1,4 +1,4 @@
-# hock-fork
+# zt-hock [![Build Status](https://travis-ci.org/zeroturnaround/zt-hock.svg?branch=master)](https://travis-ci.org/zeroturnaround/zt-hock)
 
 An HTTP mocking server forked from [Hock](https://github.com/mmalecki/hock), which itself is based on
 a project called [Nock](https://github.com/flatiron/nock).
