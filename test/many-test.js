@@ -22,6 +22,10 @@ describe('Hock Multiple Request Tests', function() {
             });
         });
 
+        afterEach(function(done) {
+            httpServer.close(done);
+        });
+
         it('should succeed with once', function(done) {
             hockInstance
                 .get('/url')
@@ -446,10 +450,6 @@ describe('Hock Multiple Request Tests', function() {
                     });
                 });
             });
-        });
-
-        afterEach(function(done) {
-            httpServer.close(done);
         });
     });
 });

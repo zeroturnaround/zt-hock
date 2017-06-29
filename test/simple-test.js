@@ -20,6 +20,10 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
+        afterEach(function(done) {
+            httpServer.close(done);
+        });
+
         it('should correctly respond to an HTTP GET request', function(done) {
             hockInstance
                 .get('/url')
@@ -219,10 +223,6 @@ describe('Hock HTTP Tests', function() {
                 done();
             });
         });
-
-        afterEach(function(done) {
-            httpServer.close(done);
-        });
     });
 
     describe("dynamic path replacing / filtering", function() {
@@ -234,6 +234,10 @@ describe('Hock HTTP Tests', function() {
 
                 done();
             });
+        });
+
+        afterEach(function(done) {
+            httpServer.close(done);
         });
 
         it('should correctly use regex', function(done) {
@@ -271,10 +275,6 @@ describe('Hock HTTP Tests', function() {
                 done();
             });
         });
-
-        afterEach(function(done) {
-            httpServer.close(done);
-        });
     });
 
     describe("test if route exists", function() {
@@ -286,6 +286,10 @@ describe('Hock HTTP Tests', function() {
 
                 done();
             });
+        });
+
+        afterEach(function(done) {
+            httpServer.close(done);
         });
 
         it('should allow testing for url', function(done) {
@@ -334,10 +338,6 @@ describe('Hock HTTP Tests', function() {
             ).toEqual(true);
 
             done();
-        });
-
-        afterEach(function(done) {
-            httpServer.close(done);
         });
     });
 });
