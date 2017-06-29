@@ -1,5 +1,4 @@
 const http = require('http');
-const should = require('should');
 const request = require('request');
 const util = require('util');
 const crypto = require('crypto');
@@ -16,8 +15,8 @@ describe('Hock Multiple Request Tests', function() {
         beforeEach(function(done) {
             hockInstance = hock.createHock();
             httpServer = http.createServer(hockInstance.handler).listen(PORT, function(err) {
-                should.not.exist(err);
-                should.exist(hockInstance);
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
 
                 done();
             });
@@ -30,10 +29,11 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
+
                 hockInstance.done();
                 done();
             });
@@ -46,13 +46,12 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
-                (function() {
-                    hockInstance.done();
-                }).should.throw();
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
+                expect(() => hockInstance.done()).toThrow();
+
                 done();
             });
         });
@@ -64,16 +63,16 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     hockInstance.done();
                     done();
@@ -88,10 +87,10 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 hockInstance.done();
                 done();
@@ -105,16 +104,16 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     hockInstance.done();
                     done();
@@ -130,16 +129,16 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     hockInstance.done();
                     done();
@@ -155,16 +154,16 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     hockInstance.done();
                     done();
@@ -183,22 +182,22 @@ describe('Hock Multiple Request Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
+                expect(err).toBeFalsy();
+                expect(hockInstance).not.toBe(undefined);
+                expect(res.statusCode).toEqual(200);
+                expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                 request('http://localhost:' + PORT + '/asdf', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        JSON.parse(body).should.eql({ 'hock': 'ok' });
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                         hockInstance.done();
                         done();
@@ -214,12 +213,13 @@ describe('Hock Multiple Request Tests', function() {
                     .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    body.should.equal('this\nis\nmy\nsample\n');
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual('this\nis\nmy\nsample\n');
+
                     hockInstance.done(function(err) {
-                        should.not.exist(err);
+                        expect(err).toBeFalsy();
                         done();
                     });
                 });
@@ -232,18 +232,19 @@ describe('Hock Multiple Request Tests', function() {
                     .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    body.should.equal('this\nis\nmy\nsample\n');
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual('this\nis\nmy\nsample\n');
 
                     request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        body.should.equal('this\nis\nmy\nsample\n');
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(body).toEqual('this\nis\nmy\nsample\n');
+
                         hockInstance.done(function(err) {
-                            should.not.exist(err);
+                            expect(err).toBeFalsy();
                             done();
                         });
                     });
@@ -294,12 +295,13 @@ describe('Hock Multiple Request Tests', function() {
                     .reply(200, new RandomStream(streamLen));
 
                 request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    body.length.should.equal(streamLen);
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body.length).toEqual(streamLen);
+
                     hockInstance.done(function(err) {
-                        should.not.exist(err);
+                        expect(err).toBeFalsy();
                         done();
                     });
                 });
@@ -312,18 +314,19 @@ describe('Hock Multiple Request Tests', function() {
                     .reply(200, new RandomStream(streamLen));
 
                 request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    body.length.should.equal(streamLen);
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body.length).toEqual(streamLen);
 
                     request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, function(err, res, body) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        body.length.should.equal(streamLen);
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(body.length).toEqual(streamLen);
+
                         hockInstance.done(function(err) {
-                            should.not.exist(err);
+                            expect(err).toBeFalsy();
                             done();
                         });
                     });
@@ -337,19 +340,20 @@ describe('Hock Multiple Request Tests', function() {
                     .reply(200, new RandomStream(1000));
 
                 request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, function(err, res, body1) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    body1.length.should.equal(1000);
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body1.length).toEqual(1000);
 
                     request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, function(err, res, body2) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        body2.length.should.equal(1000);
-                        body1.toString().should.equal(body2.toString());
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(body2.length).toEqual(1000);
+                        expect(body1.toString()).toEqual(body2.toString());
+
                         hockInstance.done(function(err) {
-                            should.not.exist(err);
+                            expect(err).toBeFalsy();
                             done();
                         });
                     });
@@ -365,35 +369,34 @@ describe('Hock Multiple Request Tests', function() {
                     .many()
                     .reply(200, { 'hock': 'ok' });
 
-                (function() {
-                    hockInstance.done();
-                }).should.throw();
+                expect(() => hockInstance.done()).toThrow();
+
                 done();
-            })
+            });
 
             it('should succeed with many requests', function(done) {
                 hockInstance
                     .get('/url')
                     .many()
-                    .reply(200, { 'hock': 'ok' })
+                    .reply(200, { 'hock': 'ok' });
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        JSON.parse(body).should.eql({ 'hock': 'ok' });
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                         request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                            should.not.exist(err);
-                            should.exist(res);
-                            res.statusCode.should.equal(200);
-                            JSON.parse(body).should.eql({ 'hock': 'ok' });
+                            expect(err).toBeFalsy();
+                            expect(hockInstance).not.toBe(undefined);
+                            expect(res.statusCode).toEqual(200);
+                            expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                             hockInstance.done();
                             done();
@@ -411,7 +414,7 @@ describe('Hock Multiple Request Tests', function() {
                     .reply(200, { 'hock': 'ok' })
                     .done();
                 done();
-            })
+            });
 
             it('should succeed with many requests', function(done) {
                 hockInstance
@@ -420,22 +423,22 @@ describe('Hock Multiple Request Tests', function() {
                     .reply(200, { 'hock': 'ok' });
 
                 request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                    should.not.exist(err);
-                    should.exist(res);
-                    res.statusCode.should.equal(200);
-                    JSON.parse(body).should.eql({ 'hock': 'ok' });
+                    expect(err).toBeFalsy();
+                    expect(hockInstance).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                     request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.statusCode.should.equal(200);
-                        JSON.parse(body).should.eql({ 'hock': 'ok' });
+                        expect(err).toBeFalsy();
+                        expect(hockInstance).not.toBe(undefined);
+                        expect(res.statusCode).toEqual(200);
+                        expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                         request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                            should.not.exist(err);
-                            should.exist(res);
-                            res.statusCode.should.equal(200);
-                            JSON.parse(body).should.eql({ 'hock': 'ok' });
+                            expect(err).toBeFalsy();
+                            expect(hockInstance).not.toBe(undefined);
+                            expect(res.statusCode).toEqual(200);
+                            expect(JSON.parse(body)).toEqual({'hock': 'ok'});
 
                             hockInstance.done();
                             done();

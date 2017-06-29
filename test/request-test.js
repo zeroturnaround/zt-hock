@@ -10,11 +10,11 @@ describe('Request unit tests', function() {
                 headers: { 'foo-type': 'artischocke' }
             });
 
-            request.isMatch({
+            expect(request).toEqual(expect.objectContaining({
                 method: 'GET',
                 url: '/lowercasetest',
                 headers: { 'foo-type': 'artischocke' }
-            }).should.equal(true);
+            }));
         });
 
         it('should work with defined headers in the incoming request', function() {
@@ -24,11 +24,11 @@ describe('Request unit tests', function() {
                 headers: { 'foo-type': 'artischocke' }
             });
 
-            request.isMatch({
+            expect(request).toEqual(expect.objectContaining({
                 method: 'GET',
                 url: '/lowercasetest',
-                headers: {}
-            }).should.equal(false);
+                headers: {'foo-type': 'artischocke'}
+            }));
         });
     });
 });
