@@ -58,12 +58,14 @@ describe("min() and max() with reply (with stream)", function() {
             .get('/url')
             .reply(200, new RandomStream(streamLen));
 
-        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
-            expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
+        catchErrors(done, () => {
+            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
+                expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-            this.hockInstance.done((err) => {
-                expect(err).toBeFalsy();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -74,12 +76,12 @@ describe("min() and max() with reply (with stream)", function() {
             .twice()
             .reply(200, new RandomStream(streamLen));
 
-        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
-            catchErrors(done, () => {
+        catchErrors(done, () => {
+            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
                 expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-                request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
-                    catchErrors(done, () => {
+                catchErrors(done, () => {
+                    request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
                         expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
                         this.hockInstance.done((err) => {
@@ -98,12 +100,12 @@ describe("min() and max() with reply (with stream)", function() {
             .twice()
             .reply(200, new RandomStream(1000));
 
-        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body1) => {
-            catchErrors(done, () => {
+        catchErrors(done, () => {
+            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body1) => {
                 expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
 
-                request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body2) => {
-                    catchErrors(done, () => {
+                catchErrors(done, () => {
+                    request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body2) => {
                         expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
 
                         expect(body1.toString()).toEqual(body2.toString());

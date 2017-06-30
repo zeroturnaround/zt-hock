@@ -23,8 +23,8 @@ describe("min() and max() with replyWithFile", function() {
             .get('/url')
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
-        request('http://localhost:' + this.port + '/url', (err, res, body) => {
-            catchErrors(done, () => {
+        catchErrors(done, () => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
                 this.hockInstance.done((err) => {
@@ -41,12 +41,12 @@ describe("min() and max() with replyWithFile", function() {
             .twice()
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
-        request('http://localhost:' + this.port + '/url', (err, res, body) => {
-            catchErrors(done, () => {
+        catchErrors(done, () => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-                request('http://localhost:' + this.port + '/url', (err, res, body) => {
-                    catchErrors(done, () => {
+                catchErrors(done, () => {
+                    request('http://localhost:' + this.port + '/url', (err, res, body) => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
                         this.hockInstance.done((err) => {

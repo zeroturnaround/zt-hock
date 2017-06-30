@@ -23,8 +23,8 @@ describe('Hock HTTP Tests', function() {
                 .get('/url')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + this.port + '/url', (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -39,14 +39,14 @@ describe('Hock HTTP Tests', function() {
                 .post('/post', { 'hock': 'post' })
                 .reply(201, { 'hock': 'created' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/post',
-                method: 'POST',
-                json: {
-                    'hock': 'post'
-                }
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: {
+                        'hock': 'post'
+                    }
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(201);
@@ -62,15 +62,15 @@ describe('Hock HTTP Tests', function() {
                 .post('/post', { keyOne: 'value1', keyTwo: 'value2' })
                 .reply(201, { 'hock': 'created' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/post',
-                method: 'POST',
-                json: {
-                    keyTwo: 'value2',
-                    keyOne: 'value1'
-                }
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: {
+                        keyTwo: 'value2',
+                        keyOne: 'value1'
+                    }
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(201);
@@ -86,14 +86,14 @@ describe('Hock HTTP Tests', function() {
                 .put('/put', { 'hock': 'put' })
                 .reply(204, { 'hock': 'updated' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/put',
-                method: 'PUT',
-                json: {
-                    'hock': 'put'
-                }
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/put',
+                    method: 'PUT',
+                    json: {
+                        'hock': 'put'
+                    }
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(204);
@@ -109,14 +109,14 @@ describe('Hock HTTP Tests', function() {
                 .patch('/patch', { 'hock': 'patch' })
                 .reply(204, { 'hock': 'updated' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/patch',
-                method: 'PATCH',
-                json: {
-                    'hock': 'patch'
-                }
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/patch',
+                    method: 'PATCH',
+                    json: {
+                        'hock': 'patch'
+                    }
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(204);
@@ -132,11 +132,11 @@ describe('Hock HTTP Tests', function() {
                 .delete('/delete')
                 .reply(202, { 'hock': 'deleted' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/delete',
-                method: 'DELETE'
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/delete',
+                    method: 'DELETE'
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(202);
@@ -152,11 +152,11 @@ describe('Hock HTTP Tests', function() {
                 .head('/head')
                 .reply(200, '', { 'content-type': 'plain/text' });
 
-            request({
-                uri: 'http://localhost:' + this.port + '/head',
-                method: 'HEAD'
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/head',
+                    method: 'HEAD'
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -173,11 +173,11 @@ describe('Hock HTTP Tests', function() {
                 .copy('/copysrc')
                 .reply(204);
 
-            request({
-                uri: 'http://localhost:' + this.port + '/copysrc',
-                method: 'COPY'
-            }, (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/copysrc',
+                    method: 'COPY'
+                }, (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(204);
@@ -223,8 +223,8 @@ describe('Hock HTTP Tests', function() {
                 .delay(1000)
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + this.port + '/url', (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -253,8 +253,8 @@ describe('Hock HTTP Tests', function() {
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -274,8 +274,8 @@ describe('Hock HTTP Tests', function() {
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
-                catchErrors(done, () => {
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
