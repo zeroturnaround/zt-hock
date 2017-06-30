@@ -1,33 +1,61 @@
 const http = require('http');
 const request = require('request');
-const util = require('util');
-const crypto = require('crypto');
 const hock = require('../');
 const PORT = 5678;
 
 const expectResponse = require("./util.js").expectResponse;
 
-describe('Hock Multiple Request Tests', function() {
-    describe("With minimum requests", function() {
-        beforeEach(function(done) {
-            this.hockInstance = hock.createHock();
-            this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
-                expect(err).toBeFalsy();
-                expect(this.hockInstance).not.toBe(undefined);
+describe("with minimum requests", function() {
+    beforeEach(function(done) {
+        this.hockInstance = hock.createHock();
+        this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
+            expect(err).toBeFalsy();
+            expect(this.hockInstance).not.toBe(undefined);
 
-                done();
-            });
+            done();
         });
+    });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+    afterEach(function(done) {
+        this.httpServer.close(done);
+    });
+
+    it('should succeed with once', function(done) {
+        this.hockInstance
+            .get('/url')
+            .once()
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+            this.hockInstance.done();
+            done();
         });
+    });
 
-        it('should succeed with once', function(done) {
-            this.hockInstance
-                .get('/url')
-                .once()
-                .reply(200, { 'hock': 'ok' });
+    it('should fail with min: 2 and a single request', function(done) {
+        this.hockInstance
+            .get('/url')
+            .min(2)
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+            expect(() => this.hockInstance.done()).toThrow();
+
+            done();
+        });
+    });
+
+    it('should succeed with min:2 and 2 requests', function(done) {
+        this.hockInstance
+            .get('/url')
+            .min(2)
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
@@ -36,44 +64,30 @@ describe('Hock Multiple Request Tests', function() {
                 done();
             });
         });
+    });
 
-        it('should fail with min: 2 and a single request', function(done) {
-            this.hockInstance
-                .get('/url')
-                .min(2)
-                .reply(200, { 'hock': 'ok' });
+    it('should succeed with max:2 and 1 request', function(done) {
+        this.hockInstance
+            .get('/url')
+            .max(2)
+            .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-                expect(() => this.hockInstance.done()).toThrow();
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                done();
-            });
+            this.hockInstance.done();
+            done();
         });
+    });
 
-        it('should succeed with min:2 and 2 requests', function(done) {
-            this.hockInstance
-                .get('/url')
-                .min(2)
-                .reply(200, { 'hock': 'ok' });
+    it('should succeed with max:2 and 2 requests', function(done) {
+        this.hockInstance
+            .get('/url')
+            .max(2)
+            .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                    this.hockInstance.done();
-                    done();
-                });
-            });
-        });
-
-        it('should succeed with max:2 and 1 request', function(done) {
-            this.hockInstance
-                .get('/url')
-                .max(2)
-                .reply(200, { 'hock': 'ok' });
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
@@ -82,14 +96,60 @@ describe('Hock Multiple Request Tests', function() {
                 done();
             });
         });
+    });
 
-        it('should succeed with max:2 and 2 requests', function(done) {
-            this.hockInstance
-                .get('/url')
-                .max(2)
-                .reply(200, { 'hock': 'ok' });
+    it('should succeed with min:2, max:3 and 2 requests', function(done) {
+        this.hockInstance
+            .get('/url')
+            .min(2)
+            .max(3)
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                this.hockInstance.done();
+                done();
+            });
+        });
+    });
+
+    it('should succeed with min:2, max:Infinity and 2 requests', function(done) {
+        this.hockInstance
+            .get('/url')
+            .min(2)
+            .max(Infinity)
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                this.hockInstance.done();
+                done();
+            });
+        });
+    });
+
+    it('should succeed with 2 different routes with different min, max values', function(done) {
+        this.hockInstance
+            .get('/url')
+            .min(2)
+            .max(3)
+            .reply(200, { 'hock': 'ok' })
+            .get('/asdf')
+            .once()
+            .reply(200, { 'hock': 'ok' });
+
+        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+            request('http://localhost:' + PORT + '/asdf', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                 request('http://localhost:' + PORT + '/url', (err, res, body) => {
@@ -100,59 +160,31 @@ describe('Hock Multiple Request Tests', function() {
                 });
             });
         });
+    });
 
-        it('should succeed with min:2, max:3 and 2 requests', function(done) {
+    describe('many()', function() {
+
+        it('should fail with no requests', function(done) {
             this.hockInstance
                 .get('/url')
-                .min(2)
-                .max(3)
+                .many()
+                .reply(200, { 'hock': 'ok' });
+
+            expect(() => this.hockInstance.done()).toThrow();
+
+            done();
+        });
+
+        it('should succeed with many requests', function(done) {
+            this.hockInstance
+                .get('/url')
+                .many()
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                 request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                    this.hockInstance.done();
-                    done();
-                });
-            });
-        });
-
-        it('should succeed with min:2, max:Infinity and 2 requests', function(done) {
-            this.hockInstance
-                .get('/url')
-                .min(2)
-                .max(Infinity)
-                .reply(200, { 'hock': 'ok' });
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                    this.hockInstance.done();
-                    done();
-                });
-            });
-        });
-
-        it('should succeed with 2 different routes with different min, max values', function(done) {
-            this.hockInstance
-                .get('/url')
-                .min(2)
-                .max(3)
-                .reply(200, { 'hock': 'ok' })
-                .get('/asdf')
-                .once()
-                .reply(200, { 'hock': 'ok' });
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                request('http://localhost:' + PORT + '/asdf', (err, res, body) => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
@@ -164,157 +196,26 @@ describe('Hock Multiple Request Tests', function() {
                 });
             });
         });
+    });
 
-        describe('min() and max() with replyWithFile', function() {
-            it('should succeed with a single call', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
-
-                    this.hockInstance.done((err) => {
-                        expect(err).toBeFalsy();
-                        done();
-                    });
-                });
-            });
-
-            it('should succeed with a multiple calls', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .twice()
-                    .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
-
-                    request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                        expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
-
-                        this.hockInstance.done((err) => {
-                            expect(err).toBeFalsy();
-                            done();
-                        });
-                    });
-                });
-            });
+    describe('any', function() {
+        it('should succeed with no requests', function(done) {
+            this.hockInstance
+                .get('/url')
+                .any()
+                .reply(200, { 'hock': 'ok' })
+                .done();
+            done();
         });
 
-        describe('min() and max() with reply (with stream)', function() {
+        it('should succeed with many requests', function(done) {
+            this.hockInstance
+                .get('/url')
+                .any()
+                .reply(200, { 'hock': 'ok' });
 
-            const Readable = require('stream').Readable;
-
-            function RandomStream(size, opt) {
-                Readable.call(this, opt);
-                this.lenToGenerate = size;
-            }
-
-            util.inherits(RandomStream, Readable);
-
-            RandomStream.prototype._read = function(size) {
-                if (!size) {
-                    size = 1024; // default size
-                }
-                let ready = true;
-                while (ready) { // only cont while push returns true
-                    if (size > this.lenToGenerate) { // only this left
-                        size = this.lenToGenerate;
-                    }
-                    if (size) {
-                        ready = this.push(crypto.randomBytes(size));
-                        this.lenToGenerate -= size;
-                    }
-                    // when done, push null and exit loop
-                    if (!this.lenToGenerate) {
-                        this.push(null);
-                        ready = false;
-                    }
-                }
-            };
-
-            const streamLen = 10000000; // 10Mb
-
-            // NOTE: We need to specify encoding: null in requests below to ensure that the response is
-            // not encoded as a utf8 string (we want the binary contents from the readstream returned.)
-
-            it('should succeed with a single call', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .reply(200, new RandomStream(streamLen));
-
-                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
-                    expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
-
-                    this.hockInstance.done((err) => {
-                        expect(err).toBeFalsy();
-                        done();
-                    });
-                });
-            });
-
-            it('should succeed with a multiple calls', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .twice()
-                    .reply(200, new RandomStream(streamLen));
-
-                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
-                    expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
-
-                    request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
-                        expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
-
-                        this.hockInstance.done((err) => {
-                            expect(err).toBeFalsy();
-                            done();
-                        });
-                    });
-                });
-            });
-
-            it('should have matching body with multiple calls', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .twice()
-                    .reply(200, new RandomStream(1000));
-
-                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body1) => {
-                    expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
-
-                    request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body2) => {
-                        expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
-
-                        expect(body1.toString()).toEqual(body2.toString());
-
-                        this.hockInstance.done((err) => {
-                            expect(err).toBeFalsy();
-                            done();
-                        });
-                    });
-                });
-            });
-        });
-
-        describe('many()', function() {
-
-            it('should fail with no requests', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .many()
-                    .reply(200, { 'hock': 'ok' });
-
-                expect(() => this.hockInstance.done()).toThrow();
-
-                done();
-            });
-
-            it('should succeed with many requests', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .many()
-                    .reply(200, { 'hock': 'ok' });
+            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                 request('http://localhost:' + PORT + '/url', (err, res, body) => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
@@ -322,45 +223,8 @@ describe('Hock Multiple Request Tests', function() {
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                            this.hockInstance.done();
-                            done();
-                        });
-                    });
-                });
-            });
-        });
-
-        describe('any', function() {
-            it('should succeed with no requests', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .any()
-                    .reply(200, { 'hock': 'ok' })
-                    .done();
-                done();
-            });
-
-            it('should succeed with many requests', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .any()
-                    .reply(200, { 'hock': 'ok' });
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                    request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                        request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                            this.hockInstance.done();
-                            done();
-                        });
+                        this.hockInstance.done();
+                        done();
                     });
                 });
             });
