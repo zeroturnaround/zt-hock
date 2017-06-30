@@ -1,22 +1,18 @@
-const http = require('http');
 const request = require('request');
 const util = require('util');
 const crypto = require('crypto');
 const hock = require('../');
 const Readable = require('stream').Readable;
-const PORT = 5678;
-
-const expectResponse = require("./util.js").expectResponse;
+const {
+    expectResponse,
+    createHttpServer,
+    PORT
+} = require("./util.js");
 
 describe("min() and max() with reply (with stream)", function() {
     beforeEach(function(done) {
         this.hockInstance = hock.createHock();
-        this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
-            expect(err).toBeFalsy();
-            expect(this.hockInstance).not.toBe(undefined);
-
-            done();
-        });
+        this.httpServer = createHttpServer(this.hockInstance, done);
     });
 
     afterEach(function(done) {

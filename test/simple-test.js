@@ -1,19 +1,16 @@
 const http = require('http');
 const request = require('request');
 const hock = require('../');
-
-const PORT = 5678;
+const {
+    createHttpServer,
+    PORT
+} = require("./util.js");
 
 describe('Hock HTTP Tests', function() {
     describe("with available ports", function() {
         beforeEach(function(done) {
             this.hockInstance = hock.createHock();
-            this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
-                expect(err).toBeFalsy();
-                expect(this.hockInstance).not.toBe(undefined);
-
-                done();
-            });
+            this.httpServer = createHttpServer(this.hockInstance, done);
         });
 
         afterEach(function(done) {
