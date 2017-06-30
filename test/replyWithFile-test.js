@@ -1,6 +1,7 @@
 const request = require('request');
 const hock = require('../');
 const {
+    catchErrors,
     expectResponse,
     createHttpServer,
     PORT
@@ -22,11 +23,13 @@ describe("min() and max() with replyWithFile", function() {
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
+            catchErrors(done, () => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-            this.hockInstance.done((err) => {
-                expect(err).toBeFalsy();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -38,14 +41,18 @@ describe("min() and max() with replyWithFile", function() {
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
+
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });

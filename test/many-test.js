@@ -1,6 +1,7 @@
 const request = require('request');
 const hock = require('../');
 const {
+    catchErrors,
     expectResponse,
     createHttpServer,
     PORT
@@ -23,11 +24,13 @@ describe("with minimum requests", function() {
             .reply(200, { 'hock': 'ok' });
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+            catchErrors(done, () => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-            this.hockInstance.done((err) => {
-                expect(err).toBeFalsy();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -42,21 +45,25 @@ describe("with minimum requests", function() {
 
         it('returns error when done callback is present', function(done) {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                catchErrors(done, () => {
+                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done((err) => {
-                    expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
-                    done();
+                    this.hockInstance.done((err) => {
+                        expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                        done();
+                    });
                 });
             });
         });
 
         it('should throw no done callback is present', function(done) {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                catchErrors(done, () => {
+                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                expect(() => this.hockInstance.done()).toThrow();
-                done();
+                    expect(() => this.hockInstance.done()).toThrow();
+                    done();
+                });
             });
         });
     });
@@ -71,11 +78,13 @@ describe("with minimum requests", function() {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                catchErrors(done, () => {
+                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                    this.hockInstance.done((err) => {
+                        expect(err).toBeFalsy();
+                        done();
+                    });
                 });
             });
         });
@@ -104,14 +113,18 @@ describe("with minimum requests", function() {
             .reply(200, { 'hock': 'ok' });
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });
@@ -125,14 +138,18 @@ describe("with minimum requests", function() {
             .reply(200, { 'hock': 'ok' });
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });
@@ -146,14 +163,18 @@ describe("with minimum requests", function() {
             .reply(200, { 'hock': 'ok' });
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });
@@ -170,17 +191,23 @@ describe("with minimum requests", function() {
             .reply(200, { 'hock': 'ok' });
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-            request('http://localhost:' + PORT + '/asdf', (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                request('http://localhost:' + PORT + '/asdf', (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                    this.hockInstance.done((err) => {
-                        expect(err).toBeFalsy();
-                        done();
+                        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                            catchErrors(done, () => {
+                                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                                this.hockInstance.done((err) => {
+                                    expect(err).toBeFalsy();
+                                    done();
+                                });
+                            });
+                        });
                     });
                 });
             });
@@ -216,17 +243,23 @@ describe("with minimum requests", function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                        catchErrors(done, () => {
+                            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        this.hockInstance.done((err) => {
-                            expect(err).toBeFalsy();
-                            done();
+                            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                                catchErrors(done, () => {
+                                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                                    this.hockInstance.done((err) => {
+                                        expect(err).toBeFalsy();
+                                        done();
+                                    });
+                                });
+                            });
                         });
                     });
                 });
@@ -254,17 +287,23 @@ describe("with minimum requests", function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                        expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+                        catchErrors(done, () => {
+                            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        this.hockInstance.done((err) => {
-                            expect(err).toBeFalsy();
-                            done();
+                            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                                catchErrors(done, () => {
+                                    expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                                    this.hockInstance.done((err) => {
+                                        expect(err).toBeFalsy();
+                                        done();
+                                    });
+                                });
+                            });
                         });
                     });
                 });

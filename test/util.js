@@ -19,5 +19,22 @@ module.exports = {
         expect(err).toBeFalsy();
         expect(res.statusCode).toEqual(statusCode);
         expect(body).toEqual(expectedBody);
+    },
+
+    /**
+     * In async tests, JEST will die (in watch mode) if an exception is thrown from a callback. This utility will catch
+     * the errors instead and report the test as failed in these case *
+     *
+     * @param {jest.DoneCallback} done
+     * @param {Function} callback
+     * @returns {Function}
+     */
+    catchErrors(done, callback) {
+        try {
+            callback();
+        }
+        catch (e) {
+            done.fail(e);
+        }
     }
 };

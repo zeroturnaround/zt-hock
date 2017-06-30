@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const hock = require('../');
 const Readable = require('stream').Readable;
 const {
+    catchErrors,
     expectResponse,
     createHttpServer,
     PORT
@@ -73,14 +74,18 @@ describe("min() and max() with reply (with stream)", function() {
             .reply(200, new RandomStream(streamLen));
 
         request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
-            expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
-
-            request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
+            catchErrors(done, () => {
                 expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
+
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });
@@ -93,16 +98,20 @@ describe("min() and max() with reply (with stream)", function() {
             .reply(200, new RandomStream(1000));
 
         request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body1) => {
-            expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
+            catchErrors(done, () => {
+                expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
 
-            request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body2) => {
-                expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
+                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body2) => {
+                    catchErrors(done, () => {
+                        expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
 
-                expect(body1.toString()).toEqual(body2.toString());
+                        expect(body1.toString()).toEqual(body2.toString());
 
-                this.hockInstance.done((err) => {
-                    expect(err).toBeFalsy();
-                    done();
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
+                    });
                 });
             });
         });

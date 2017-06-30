@@ -3,6 +3,7 @@ const request = require('request');
 const hock = require('../');
 const {
     createHttpServer,
+    catchErrors,
     PORT
 } = require("./util.js");
 
@@ -23,12 +24,13 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(200);
-                expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
-
-                done();
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
+                    done();
+                });
             });
         });
 
@@ -44,12 +46,14 @@ describe('Hock HTTP Tests', function() {
                     'hock': 'post'
                 }
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(201);
-                expect(body).toEqual({ 'hock': 'created' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(201);
+                    expect(body).toEqual({ 'hock': 'created' });
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -66,12 +70,14 @@ describe('Hock HTTP Tests', function() {
                     keyOne: 'value1'
                 }
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(201);
-                expect(body).toEqual({ 'hock': 'created' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(201);
+                    expect(body).toEqual({ 'hock': 'created' });
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -87,12 +93,14 @@ describe('Hock HTTP Tests', function() {
                     'hock': 'put'
                 }
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(204);
-                expect(body).toBe(undefined);
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toBe(undefined);
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -108,12 +116,14 @@ describe('Hock HTTP Tests', function() {
                     'hock': 'patch'
                 }
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(204);
-                expect(body).toBe(undefined);
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toBe(undefined);
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -126,12 +136,14 @@ describe('Hock HTTP Tests', function() {
                 uri: 'http://localhost:' + PORT + '/delete',
                 method: 'DELETE'
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(202);
-                expect(JSON.parse(body)).toEqual({ 'hock': 'deleted' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(202);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'deleted' });
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -144,13 +156,15 @@ describe('Hock HTTP Tests', function() {
                 uri: 'http://localhost:' + PORT + '/head',
                 method: 'HEAD'
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(200);
-                expect(body).toEqual('');
-                expect(res.headers).toEqual(expect.objectContaining({'content-type': 'plain/text'}));
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual('');
+                    expect(res.headers).toEqual(expect.objectContaining({'content-type': 'plain/text'}));
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -163,12 +177,14 @@ describe('Hock HTTP Tests', function() {
                 uri: 'http://localhost:' + PORT + '/copysrc',
                 method: 'COPY'
             }, (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(204);
-                expect(body).toEqual('');
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toEqual('');
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -180,14 +196,14 @@ describe('Hock HTTP Tests', function() {
             expect(() => this.hockInstance.done()).toThrow();
         });
 
-        it('unmatched requests should NOT throw when configured', function() {
+        it('unmatched requests should NOT throw when configured', function(done) {
             const hockInstance = hock.createHock({throwOnUnprocessedRequests: false});
 
             hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
-            expect(() => this.hockInstance.done()).not.toThrow();
+            expect(() => hockInstance.done(() => done())).not.toThrow();
         });
 
         it('unmatched requests should call done callback with err', function(done) {
@@ -196,7 +212,6 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, '', { 'Content-Type': 'plain/text' })
                 .done((err) => {
                     expect(err).not.toBe(undefined);
-
                     done();
                 });
         });
@@ -208,12 +223,14 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(200);
-                expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
-                done();
+                    done();
+                });
             });
         });
     });
@@ -240,13 +257,14 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url?password=artischocko', (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(200);
-                expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
-                done();
-
+                    done();
+                });
             });
         });
 
@@ -260,12 +278,14 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             request('http://localhost:' + PORT + '/url?password=artischocko', (err, res, body) => {
-                expect(err).toBeFalsy();
-                expect(res).not.toBe(undefined);
-                expect(res.statusCode).toEqual(200);
-                expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
+                catchErrors(done, () => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
-                done();
+                    done();
+                });
             });
         });
     });
@@ -306,14 +326,17 @@ describe('Hock HTTP Tests', function() {
                 .get('/artischocko', { 'foo-type': 'artischocke' })
                 .reply(200, { 'hock': 'ok' });
 
-            expect(
-                this.hockInstance.hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
-            ).toEqual(false);
-            expect(
-                this.hockInstance.hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
-            ).toEqual(true);
+            catchErrors(done, () => {
+                expect(
+                    this.hockInstance.hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
+                ).toEqual(false);
 
-            done();
+                expect(
+                    this.hockInstance.hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
+                ).toEqual(true);
+
+                done();
+            });
         });
 
         it('matches the body', function(done) {
@@ -323,14 +346,16 @@ describe('Hock HTTP Tests', function() {
                 .post('/artischocko', 'enteente')
                 .reply(200, { 'hock': 'ok' });
 
-            expect(
-                this.hockInstance.hasRoute('GET', '/bla?password=foo', 'testing')
-            ).toEqual(false);
-            expect(
-                this.hockInstance.hasRoute('POST', '/artischocko', 'enteente')
-            ).toEqual(true);
+            catchErrors(done, () => {
+                expect(
+                    this.hockInstance.hasRoute('GET', '/bla?password=foo', 'testing')
+                ).toEqual(false);
+                expect(
+                    this.hockInstance.hasRoute('POST', '/artischocko', 'enteente')
+                ).toEqual(true);
 
-            done();
+                done();
+            });
         });
     });
 });
