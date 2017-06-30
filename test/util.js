@@ -5,16 +5,14 @@ module.exports = {
         const httpServer = http.createServer(hockInstance.handler).listen(port, (err) => {
             expect(err).toBeFalsy();
             expect(hockInstance).not.toBe(undefined);
-
-            // Delay to reduce flakyness on Travis
-            setTimeout(() => done(), 250);
+            done();
         });
 
         return httpServer;
     },
 
     createPort() {
-        return Math.floor(Math.random() * (6000 - 5000)) + 5000;
+        return 8000;
     },
 
     expectResponse(err, res, body, {statusCode, expectedBody}) {
