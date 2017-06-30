@@ -2,17 +2,15 @@ const http = require('http');
 
 module.exports = {
     createHttpServer(hockInstance, port, done) {
-        const httpServer = http.createServer(hockInstance.handler).listen(port, (err) => {
+        return http.createServer(hockInstance.handler).listen(port, (err) => {
             expect(err).toBeFalsy();
             expect(hockInstance).not.toBe(undefined);
             done();
         });
-
-        return httpServer;
     },
 
     createPort() {
-        return 8000;
+        return Math.floor(Math.random() * (6000 - 5000)) + 5000;
     },
 
     expectResponse(err, res, body, {statusCode, expectedBody}) {

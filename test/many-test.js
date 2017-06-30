@@ -37,14 +37,12 @@ describe("with minimum requests", function() {
     });
 
     describe('with min: 2 and a single request', function() {
-        beforeEach(function() {
+        it('returns error when done callback is present', function(done) {
             this.hockInstance
                 .get('/url')
                 .min(2)
                 .reply(200, { 'hock': 'ok' });
-        });
 
-        it('returns error when done callback is present', function(done) {
             catchErrors(done, () => {
                 request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
@@ -58,6 +56,11 @@ describe("with minimum requests", function() {
         });
 
         it('should throw no done callback is present', function(done) {
+            this.hockInstance
+                .get('/url')
+                .min(2)
+                .reply(200, { 'hock': 'ok' });
+
             catchErrors(done, () => {
                 request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
@@ -221,14 +224,12 @@ describe("with minimum requests", function() {
 
     describe('many()', function() {
         describe('with no requests', function() {
-            beforeEach(function() {
+            it('should fail with error when done callback is present', function(done) {
                 this.hockInstance
                     .get('/url')
                     .many()
                     .reply(200, { 'hock': 'ok' });
-            });
 
-            it('should fail with error when done callback is present', function(done) {
                 this.hockInstance.done((err) => {
                     expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
                     done();
@@ -236,6 +237,11 @@ describe("with minimum requests", function() {
             });
 
             it('should throw when no done callback is present', function(done) {
+                this.hockInstance
+                    .get('/url')
+                    .many()
+                    .reply(200, { 'hock': 'ok' });
+                    
                 expect(() => this.hockInstance.done()).toThrow();
                 done();
             });
