@@ -188,12 +188,13 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('unmatched requests should throw', function() {
+        it('unmatched requests should throw', function(done) {
             this.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
             expect(() => this.hockInstance.done()).toThrow();
+            done();
         });
 
         it('unmatched requests should NOT throw when configured', function(done) {
