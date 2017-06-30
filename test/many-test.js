@@ -36,17 +36,30 @@ describe("with minimum requests", function() {
         });
     });
 
-    it('should fail with min: 2 and a single request', function(done) {
-        this.hockInstance
-            .get('/url')
-            .min(2)
-            .reply(200, { 'hock': 'ok' });
+    describe('with min: 2 and a single request', function() {
+        beforeEach(function() {
+            this.hockInstance
+                .get('/url')
+                .min(2)
+                .reply(200, { 'hock': 'ok' });
+        });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
-            expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+        it('returns error when done callback is present', function(done) {
+            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-            this.hockInstance.done((err) => {
-                expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                this.hockInstance.done((err) => {
+                    expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                    done();
+                });
+            });
+        });
+
+        it('should throw no done callback is present', function(done) {
+            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
+
+                expect(() => this.hockInstance.done()).toThrow();
                 done();
             });
         });
@@ -179,14 +192,23 @@ describe("with minimum requests", function() {
     });
 
     describe('many()', function() {
-        it('should fail with no requests', function(done) {
-            this.hockInstance
-                .get('/url')
-                .many()
-                .reply(200, { 'hock': 'ok' });
+        describe('with no requests', function() {
+            beforeEach(function() {
+                this.hockInstance
+                    .get('/url')
+                    .many()
+                    .reply(200, { 'hock': 'ok' });
+            });
 
-            this.hockInstance.done((err) => {
-                expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+            it('should fail with error when done callback is present', function(done) {
+                this.hockInstance.done((err) => {
+                    expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                    done();
+                });
+            });
+
+            it('should throw when no done callback is present', function(done) {
+                expect(() => this.hockInstance.done()).toThrow();
                 done();
             });
         });
