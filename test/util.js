@@ -2,12 +2,12 @@ const http = require('http');
 
 module.exports = {
     createHttpServer(hockInstance, port, done) {
-
         const httpServer = http.createServer(hockInstance.handler).listen(port, (err) => {
             expect(err).toBeFalsy();
             expect(hockInstance).not.toBe(undefined);
 
-            done();
+            // Delay to reduce flakyness on Travis
+            setTimeout(() => done(), 250);
         });
 
         return httpServer;
