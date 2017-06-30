@@ -4,13 +4,14 @@ const {
     catchErrors,
     expectResponse,
     createHttpServer,
-    PORT
+    createPort
 } = require("./util.js");
 
 describe("with minimum requests", function() {
     beforeEach(function(done) {
+        this.port = createPort();
         this.hockInstance = hock.createHock();
-        this.httpServer = createHttpServer(this.hockInstance, done);
+        this.httpServer = createHttpServer(this.hockInstance, this.port, done);
     });
 
     afterEach(function(done) {
@@ -23,7 +24,7 @@ describe("with minimum requests", function() {
             .once()
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -44,7 +45,7 @@ describe("with minimum requests", function() {
         });
 
         it('returns error when done callback is present', function(done) {
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -57,7 +58,7 @@ describe("with minimum requests", function() {
         });
 
         it('should throw no done callback is present', function(done) {
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -74,10 +75,10 @@ describe("with minimum requests", function() {
             .min(2)
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -96,7 +97,7 @@ describe("with minimum requests", function() {
             .max(2)
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
             this.hockInstance.done((err) => {
@@ -112,11 +113,11 @@ describe("with minimum requests", function() {
             .max(2)
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -137,11 +138,11 @@ describe("with minimum requests", function() {
             .max(3)
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -162,11 +163,11 @@ describe("with minimum requests", function() {
             .max(Infinity)
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -190,15 +191,15 @@ describe("with minimum requests", function() {
             .once()
             .reply(200, { 'hock': 'ok' });
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                request('http://localhost:' + PORT + '/asdf', (err, res, body) => {
+                request('http://localhost:' + this.port + '/asdf', (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                        request('http://localhost:' + this.port + '/url', (err, res, body) => {
                             catchErrors(done, () => {
                                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -242,15 +243,15 @@ describe("with minimum requests", function() {
                 .many()
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                    request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    request('http://localhost:' + this.port + '/url', (err, res, body) => {
                         catchErrors(done, () => {
                             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                                 catchErrors(done, () => {
                                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
@@ -286,15 +287,15 @@ describe("with minimum requests", function() {
                 .any()
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                    request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                    request('http://localhost:' + this.port + '/url', (err, res, body) => {
                         catchErrors(done, () => {
                             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                                 catchErrors(done, () => {
                                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 

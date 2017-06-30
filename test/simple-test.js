@@ -1,17 +1,17 @@
-const http = require('http');
 const request = require('request');
 const hock = require('../');
 const {
     createHttpServer,
     catchErrors,
-    PORT
+    createPort
 } = require("./util.js");
 
 describe('Hock HTTP Tests', function() {
     describe("with available ports", function() {
         beforeEach(function(done) {
+            this.port = createPort();
             this.hockInstance = hock.createHock();
-            this.httpServer = createHttpServer(this.hockInstance, done);
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
         });
 
         afterEach(function(done) {
@@ -23,7 +23,7 @@ describe('Hock HTTP Tests', function() {
                 .get('/url')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
@@ -40,7 +40,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(201, { 'hock': 'created' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/post',
+                uri: 'http://localhost:' + this.port + '/post',
                 method: 'POST',
                 json: {
                     'hock': 'post'
@@ -63,7 +63,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(201, { 'hock': 'created' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/post',
+                uri: 'http://localhost:' + this.port + '/post',
                 method: 'POST',
                 json: {
                     keyTwo: 'value2',
@@ -87,7 +87,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(204, { 'hock': 'updated' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/put',
+                uri: 'http://localhost:' + this.port + '/put',
                 method: 'PUT',
                 json: {
                     'hock': 'put'
@@ -110,7 +110,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(204, { 'hock': 'updated' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/patch',
+                uri: 'http://localhost:' + this.port + '/patch',
                 method: 'PATCH',
                 json: {
                     'hock': 'patch'
@@ -133,7 +133,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(202, { 'hock': 'deleted' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/delete',
+                uri: 'http://localhost:' + this.port + '/delete',
                 method: 'DELETE'
             }, (err, res, body) => {
                 catchErrors(done, () => {
@@ -153,7 +153,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, '', { 'content-type': 'plain/text' });
 
             request({
-                uri: 'http://localhost:' + PORT + '/head',
+                uri: 'http://localhost:' + this.port + '/head',
                 method: 'HEAD'
             }, (err, res, body) => {
                 catchErrors(done, () => {
@@ -174,7 +174,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(204);
 
             request({
-                uri: 'http://localhost:' + PORT + '/copysrc',
+                uri: 'http://localhost:' + this.port + '/copysrc',
                 method: 'COPY'
             }, (err, res, body) => {
                 catchErrors(done, () => {
@@ -222,7 +222,7 @@ describe('Hock HTTP Tests', function() {
                 .delay(1000)
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url', (err, res, body) => {
                 catchErrors(done, () => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
@@ -237,13 +237,9 @@ describe('Hock HTTP Tests', function() {
 
     describe("dynamic path replacing / filtering", function() {
         beforeEach(function(done) {
+            this.port = createPort();
             this.hockInstance = hock.createHock();
-            this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
-                expect(err).toBeFalsy();
-                expect(this.hockInstance).not.toBe(undefined);
-
-                done();
-            });
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
         });
 
         afterEach(function(done) {
@@ -256,7 +252,7 @@ describe('Hock HTTP Tests', function() {
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url?password=artischocko', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
                 catchErrors(done, () => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
@@ -277,7 +273,7 @@ describe('Hock HTTP Tests', function() {
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url?password=artischocko', (err, res, body) => {
+            request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
                 catchErrors(done, () => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
@@ -292,13 +288,9 @@ describe('Hock HTTP Tests', function() {
 
     describe("test if route exists", function() {
         beforeEach(function(done) {
+            this.port = createPort();
             this.hockInstance = hock.createHock();
-            this.httpServer = http.createServer(this.hockInstance.handler).listen(PORT, (err) => {
-                expect(err).toBeFalsy();
-                expect(this.hockInstance).not.toBe(undefined);
-
-                done();
-            });
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
         });
 
         afterEach(function(done) {

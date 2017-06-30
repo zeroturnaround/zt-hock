@@ -4,13 +4,14 @@ const {
     catchErrors,
     expectResponse,
     createHttpServer,
-    PORT
+    createPort
 } = require("./util.js");
 
 describe("min() and max() with replyWithFile", function() {
     beforeEach(function(done) {
+        this.port = createPort();
         this.hockInstance = hock.createHock();
-        this.httpServer = createHttpServer(this.hockInstance, done);
+        this.httpServer = createHttpServer(this.hockInstance, this.port, done);
     });
 
     afterEach(function(done) {
@@ -22,7 +23,7 @@ describe("min() and max() with replyWithFile", function() {
             .get('/url')
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
@@ -40,11 +41,11 @@ describe("min() and max() with replyWithFile", function() {
             .twice()
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
-        request('http://localhost:' + PORT + '/url', (err, res, body) => {
+        request('http://localhost:' + this.port + '/url', (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-                request('http://localhost:' + PORT + '/url', (err, res, body) => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 

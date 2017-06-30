@@ -7,13 +7,14 @@ const {
     catchErrors,
     expectResponse,
     createHttpServer,
-    PORT
+    createPort
 } = require("./util.js");
 
 describe("min() and max() with reply (with stream)", function() {
     beforeEach(function(done) {
+        this.port = createPort();
         this.hockInstance = hock.createHock();
-        this.httpServer = createHttpServer(this.hockInstance, done);
+        this.httpServer = createHttpServer(this.hockInstance, this.port, done);
     });
 
     afterEach(function(done) {
@@ -57,7 +58,7 @@ describe("min() and max() with reply (with stream)", function() {
             .get('/url')
             .reply(200, new RandomStream(streamLen));
 
-        request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
+        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
             expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
             this.hockInstance.done((err) => {
@@ -73,11 +74,11 @@ describe("min() and max() with reply (with stream)", function() {
             .twice()
             .reply(200, new RandomStream(streamLen));
 
-        request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
+        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body) => {
+                request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
@@ -97,11 +98,11 @@ describe("min() and max() with reply (with stream)", function() {
             .twice()
             .reply(200, new RandomStream(1000));
 
-        request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body1) => {
+        request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body1) => {
             catchErrors(done, () => {
                 expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
 
-                request({'url': 'http://localhost:' + PORT + '/url', 'encoding': null}, (err, res, body2) => {
+                request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body2) => {
                     catchErrors(done, () => {
                         expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
 

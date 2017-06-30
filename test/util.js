@@ -1,9 +1,9 @@
 const http = require('http');
-const PORT = 5678;
 
 module.exports = {
-    createHttpServer(hockInstance, done) {
-        const httpServer = http.createServer(hockInstance.handler).listen(PORT, (err) => {
+    createHttpServer(hockInstance, port, done) {
+
+        const httpServer = http.createServer(hockInstance.handler).listen(port, (err) => {
             expect(err).toBeFalsy();
             expect(hockInstance).not.toBe(undefined);
 
@@ -13,7 +13,9 @@ module.exports = {
         return httpServer;
     },
 
-    PORT: PORT,
+    createPort() {
+        return Math.floor(Math.random() * (6000 - 5000)) + 5000;
+    },
 
     expectResponse(err, res, body, {statusCode, expectedBody}) {
         expect(err).toBeFalsy();
