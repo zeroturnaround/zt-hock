@@ -29,8 +29,10 @@ describe("with minimum requests", function() {
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-            this.hockInstance.done();
-            done();
+            this.hockInstance.done((err) => {
+                expect(err).toBeFalsy();
+                done();
+            });
         });
     });
 
@@ -42,9 +44,11 @@ describe("with minimum requests", function() {
 
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
-            expect(() => this.hockInstance.done()).toThrow();
 
-            done();
+            this.hockInstance.done((err) => {
+                expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                done();
+            });
         });
     });
 
@@ -60,8 +64,10 @@ describe("with minimum requests", function() {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -75,8 +81,10 @@ describe("with minimum requests", function() {
         request('http://localhost:' + PORT + '/url', (err, res, body) => {
             expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-            this.hockInstance.done();
-            done();
+            this.hockInstance.done((err) => {
+                expect(err).toBeFalsy();
+                done();
+            });
         });
     });
 
@@ -92,8 +100,10 @@ describe("with minimum requests", function() {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -111,8 +121,10 @@ describe("with minimum requests", function() {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -130,8 +142,10 @@ describe("with minimum requests", function() {
             request('http://localhost:' + PORT + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                this.hockInstance.done();
-                done();
+                this.hockInstance.done((err) => {
+                    expect(err).toBeFalsy();
+                    done();
+                });
             });
         });
     });
@@ -155,24 +169,26 @@ describe("with minimum requests", function() {
                 request('http://localhost:' + PORT + '/url', (err, res, body) => {
                     expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                    this.hockInstance.done();
-                    done();
+                    this.hockInstance.done((err) => {
+                        expect(err).toBeFalsy();
+                        done();
+                    });
                 });
             });
         });
     });
 
     describe('many()', function() {
-
         it('should fail with no requests', function(done) {
             this.hockInstance
                 .get('/url')
                 .many()
                 .reply(200, { 'hock': 'ok' });
 
-            expect(() => this.hockInstance.done()).toThrow();
-
-            done();
+            this.hockInstance.done((err) => {
+                expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
+                done();
+            });
         });
 
         it('should succeed with many requests', function(done) {
@@ -190,8 +206,10 @@ describe("with minimum requests", function() {
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        this.hockInstance.done();
-                        done();
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
                     });
                 });
             });
@@ -203,9 +221,12 @@ describe("with minimum requests", function() {
             this.hockInstance
                 .get('/url')
                 .any()
-                .reply(200, { 'hock': 'ok' })
-                .done();
-            done();
+                .reply(200, { 'hock': 'ok' });
+
+            this.hockInstance.done((err) => {
+                expect(err).toBeFalsy();
+                done();
+            });
         });
 
         it('should succeed with many requests', function(done) {
@@ -223,8 +244,10 @@ describe("with minimum requests", function() {
                     request('http://localhost:' + PORT + '/url', (err, res, body) => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: JSON.stringify({ 'hock': 'ok' })});
 
-                        this.hockInstance.done();
-                        done();
+                        this.hockInstance.done((err) => {
+                            expect(err).toBeFalsy();
+                            done();
+                        });
                     });
                 });
             });
