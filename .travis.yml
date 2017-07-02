@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - 6
 install:
-  - npm install coveralls
+  - yarn add coveralls
 cache:
   directories:
   - node_modules
