@@ -34,7 +34,9 @@
     "deep-equal": "0.2.1"
   },
   "jest": {
-    "roots": ["test"],
+    "roots": [
+      "test"
+    ],
     "testRegex": "-test.js",
     "collectCoverage": true
   }
