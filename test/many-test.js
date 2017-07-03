@@ -224,12 +224,14 @@ describe("with minimum requests", function() {
 
     describe('many()', function() {
         describe('with no requests', function() {
-            it('should fail with error when done callback is present', function(done) {
+            beforeEach(function() {
                 this.hockInstance
                     .get('/url')
                     .many()
                     .reply(200, { 'hock': 'ok' });
+            });
 
+            it('should fail with error when done callback is present', function(done) {
                 this.hockInstance.done((err) => {
                     expect(err.message.includes("Unprocessed Requests in Assertions Queue:")).toEqual(true);
                     done();
@@ -237,11 +239,6 @@ describe("with minimum requests", function() {
             });
 
             it('should throw when no done callback is present', function(done) {
-                this.hockInstance
-                    .get('/url')
-                    .many()
-                    .reply(200, { 'hock': 'ok' });
-                    
                 expect(() => this.hockInstance.done()).toThrow();
                 done();
             });
