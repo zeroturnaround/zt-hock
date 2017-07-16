@@ -1,336 +1,354 @@
-const http = require('http');
-const should = require('should');
 const request = require('request');
 const hock = require('../');
-require('should-http');
-
-const PORT = 5678;
+const {
+    createHttpServer,
+    catchErrors,
+    createPort
+} = require("./util.js");
 
 describe('Hock HTTP Tests', function() {
-
-    let hockInstance;
-    let httpServer;
-
     describe("with available ports", function() {
-        before(function(done) {
-            hockInstance = hock.createHock();
-            httpServer = http.createServer(hockInstance.handler).listen(PORT, function(err) {
-                should.not.exist(err);
-                should.exist(hockInstance);
+        beforeEach(function(done) {
+            this.port = createPort();
+            this.hockInstance = hock.createHock();
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+        });
 
-                done();
-            });
+        afterEach(function(done) {
+            this.httpServer.close(done);
         });
 
         it('should correctly respond to an HTTP GET request', function(done) {
-            hockInstance
+            this.hockInstance
                 .get('/url')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
-                done();
-
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP POST request', function(done) {
-            hockInstance
+            this.hockInstance
                 .post('/post', { 'hock': 'post' })
                 .reply(201, { 'hock': 'created' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/post',
-                method: 'POST',
-                json: {
-                    'hock': 'post'
-                }
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(201);
-                body.should.eql({ 'hock': 'created' });
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: {
+                        'hock': 'post'
+                    }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(201);
+                    expect(body).toEqual({ 'hock': 'created' });
+
+                    done();
+                });
             });
         });
 
         it('does not care about the order of the keys in the body', function(done) {
-            hockInstance
+            this.hockInstance
                 .post('/post', { keyOne: 'value1', keyTwo: 'value2' })
                 .reply(201, { 'hock': 'created' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/post',
-                method: 'POST',
-                json: {
-                    keyTwo: 'value2',
-                    keyOne: 'value1'
-                }
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(201);
-                body.should.eql({ 'hock': 'created' });
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: {
+                        keyTwo: 'value2',
+                        keyOne: 'value1'
+                    }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(201);
+                    expect(body).toEqual({ 'hock': 'created' });
+
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP PUT request', function(done) {
-            hockInstance
+            this.hockInstance
                 .put('/put', { 'hock': 'put' })
                 .reply(204, { 'hock': 'updated' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/put',
-                method: 'PUT',
-                json: {
-                    'hock': 'put'
-                }
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(204);
-                should.not.exist(body);
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/put',
+                    method: 'PUT',
+                    json: {
+                        'hock': 'put'
+                    }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toBe(undefined);
+
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP PATCH request', function(done) {
-            hockInstance
+            this.hockInstance
                 .patch('/patch', { 'hock': 'patch' })
                 .reply(204, { 'hock': 'updated' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/patch',
-                method: 'PATCH',
-                json: {
-                    'hock': 'patch'
-                }
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(204);
-                should.not.exist(body);
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/patch',
+                    method: 'PATCH',
+                    json: {
+                        'hock': 'patch'
+                    }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toBe(undefined);
+
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP DELETE request', function(done) {
-            hockInstance
+            this.hockInstance
                 .delete('/delete')
                 .reply(202, { 'hock': 'deleted' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/delete',
-                method: 'DELETE'
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(202);
-                should.exist(body);
-                JSON.parse(body).should.eql({ 'hock': 'deleted' });
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/delete',
+                    method: 'DELETE'
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(202);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'deleted' });
+
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP HEAD request', function(done) {
-            hockInstance
+            this.hockInstance
                 .head('/head')
-                .reply(200, '', { 'Content-Type': 'plain/text' });
+                .reply(200, '', { 'content-type': 'plain/text' });
 
-            request({
-                uri: 'http://localhost:' + PORT + '/head',
-                method: 'HEAD'
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                should.exist(body);
-                body.should.equal('');
-                res.should.have.header('content-type', 'plain/text');
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/head',
+                    method: 'HEAD'
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual('');
+                    expect(res.headers).toEqual(expect.objectContaining({'content-type': 'plain/text'}));
+
+                    done();
+                });
             });
         });
 
         it('should correctly respond to an HTTP COPY request', function(done) {
-            hockInstance
+            this.hockInstance
                 .copy('/copysrc')
                 .reply(204);
 
-            request({
-                uri: 'http://localhost:' + PORT + '/copysrc',
-                method: 'COPY'
-            }, function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(204);
-                body.should.equal('');
-                done();
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/copysrc',
+                    method: 'COPY'
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(204);
+                    expect(body).toEqual('');
+
+                    done();
+                });
             });
         });
 
-        it('unmatched requests should throw', function() {
-            hockInstance
+        it('unmatched requests should throw', function(done) {
+            this.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
-            (function() {
-                hockInstance.done();
-            }).should.throw();
+            expect(() => this.hockInstance.done()).toThrow();
+            done();
         });
 
-        it('unmatched requests should NOT throw when configured', function() {
+        it('unmatched requests should NOT throw when configured', function(done) {
             const hockInstance = hock.createHock({throwOnUnprocessedRequests: false});
 
             hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
-            (function() {
-                hockInstance.done();
-            }).should.not.throw();
+            expect(() => hockInstance.done(() => done())).not.toThrow();
         });
 
         it('unmatched requests should call done callback with err', function(done) {
-            hockInstance
+            this.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' })
-                .done(function(err) {
-                    should.exist(err);
+                .done((err) => {
+                    expect(err).not.toBe(undefined);
                     done();
                 });
         });
 
         it('should work with a delay configured', function(done) {
-            hockInstance
+            this.hockInstance
                 .get('/url')
                 .delay(1000)
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
-                done();
-            });
-        });
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url', (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
-        after(function(done) {
-            httpServer.close(done);
+                    done();
+                });
+            });
         });
     });
 
     describe("dynamic path replacing / filtering", function() {
-        before(function(done) {
-            hockInstance = hock.createHock();
-            httpServer = http.createServer(hockInstance.handler).listen(PORT, function(err) {
-                should.not.exist(err);
-                should.exist(hockInstance);
+        beforeEach(function(done) {
+            this.port = createPort();
+            this.hockInstance = hock.createHock();
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+        });
 
-                done();
-            });
+        afterEach(function(done) {
+            this.httpServer.close(done);
         });
 
         it('should correctly use regex', function(done) {
-            hockInstance
+            this.hockInstance
                 .filteringPathRegEx(/password=[^&]*/g, 'password=XXX')
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url?password=artischocko', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
-                done();
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
+                    done();
+                });
             });
         });
 
         it('should correctly use functions', function(done) {
-            hockInstance
+            this.hockInstance
                 .filteringPath(function(p) {
-                    p.should.equal('/url?password=artischocko');
+                    expect(p).toEqual('/url?password=artischocko');
                     return '/url?password=XXX';
                 })
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
-            request('http://localhost:' + PORT + '/url?password=artischocko', function(err, res, body) {
-                should.not.exist(err);
-                should.exist(res);
-                res.statusCode.should.equal(200);
-                JSON.parse(body).should.eql({ 'hock': 'ok' });
-                done();
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(JSON.parse(body)).toEqual({ 'hock': 'ok' });
 
+                    done();
+                });
             });
-        });
-
-        after(function(done) {
-            httpServer.close(done);
         });
     });
 
     describe("test if route exists", function() {
-        before(function(done) {
-            hockInstance = hock.createHock();
-            httpServer = http.createServer(hockInstance.handler).listen(PORT, function(err) {
-                should.not.exist(err);
-                should.exist(hockInstance);
+        beforeEach(function(done) {
+            this.port = createPort();
+            this.hockInstance = hock.createHock();
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+        });
 
-                done();
-            });
+        afterEach(function(done) {
+            this.httpServer.close(done);
         });
 
         it('should allow testing for url', function(done) {
-            hockInstance
+            this.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .get('/arti')
                 .reply(200, { 'hock': 'ok' });
 
-            hockInstance.hasRoute('GET', '/url?password=foo').should.equal(true);
-            hockInstance.hasRoute('GET', '/arti').should.equal(true);
-            hockInstance.hasRoute('GET', '/notexist').should.equal(false);
+            expect(this.hockInstance.hasRoute('GET', '/url?password=foo')).toEqual(true);
+            expect(this.hockInstance.hasRoute('GET', '/arti')).toEqual(true);
+            expect(this.hockInstance.hasRoute('GET', '/notexist')).toEqual(false);
+
             done();
         });
 
         it('matches the header', function(done) {
-            hockInstance
+            this.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .get('/artischocko', { 'foo-type': 'artischocke' })
                 .reply(200, { 'hock': 'ok' });
 
-            hockInstance
-                .hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
-                .should.equal(false);
-            hockInstance
-                .hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
-                .should.equal(true);
+            catchErrors(done, () => {
+                expect(
+                    this.hockInstance.hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
+                ).toEqual(false);
 
-            done();
+                expect(
+                    this.hockInstance.hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
+                ).toEqual(true);
+
+                done();
+            });
         });
 
         it('matches the body', function(done) {
-            hockInstance
+            this.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .post('/artischocko', 'enteente')
                 .reply(200, { 'hock': 'ok' });
 
-            hockInstance.hasRoute('GET', '/bla?password=foo', 'testing').should.equal(false);
-            hockInstance.hasRoute('POST', '/artischocko', 'enteente').should.equal(true);
+            catchErrors(done, () => {
+                expect(
+                    this.hockInstance.hasRoute('GET', '/bla?password=foo', 'testing')
+                ).toEqual(false);
+                expect(
+                    this.hockInstance.hasRoute('POST', '/artischocko', 'enteente')
+                ).toEqual(true);
 
-            done();
-        });
-
-        after(function(done) {
-            httpServer.close(done);
+                done();
+            });
         });
     });
 });
