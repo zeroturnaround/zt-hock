@@ -1,12 +1,11 @@
-# zt-hock [![Build Status](https://travis-ci.org/zeroturnaround/zt-hock.svg?branch=master)](https://travis-ci.org/zeroturnaround/zt-hock)
+# zt-hock [![Build Status](https://travis-ci.org/zeroturnaround/zt-hock.svg?branch=master)](https://travis-ci.org/zeroturnaround/zt-hock) [![Coverage Status](https://coveralls.io/repos/github/zeroturnaround/zt-hock/badge.svg?branch=master)](https://coveralls.io/github/zeroturnaround/zt-hock?branch=master)
 
 An HTTP mocking server forked from [Hock](https://github.com/mmalecki/hock), which itself is based on
 a project called [Nock](https://github.com/flatiron/nock).
 
 ## Why fork
 
-We use hock for several projects, but lacked a couple of features and configurations options. The projected looked like it was dead (no comments, merged PRs for more than half a year). As a result, we decided to forked
-the project, re-write it and add our missing features.
+We use hock for several projects, but lacked a couple of features and configurations options. The project looked like it was dead (no comments and merged PRs for more than half a year). As a result, we decided to fork the project, re-write it, and add our missing features.
 
 ## Difference with hock
 
