@@ -287,6 +287,65 @@ describe('Hock HTTP Tests', function() {
         });
     });
 
+    describe("dynamic request body replacing / filtering", function() {
+        beforeEach(function(done) {
+            this.port = createPort();
+            this.hockInstance = hock.createHock();
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+        });
+
+        afterEach(function(done) {
+            this.httpServer.close(done);
+        });
+
+        it('should correctly use regex', function(done) {
+            this.hockInstance
+                .filteringRequestBodyRegEx(/\d{3}/, 'numbers-stripped')
+                .post('/post', { numbers: 'numbers-stripped' })
+                .reply(200, { 'hock': 'ok' });
+
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: { numbers: '123' }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual({ 'hock': 'ok' });
+
+                    done();
+                });
+            });
+        });
+
+        it('should correctly use functions', function(done) {
+            this.hockInstance
+                .filteringRequestBody(function(body) {
+                    expect(body).toEqual(JSON.stringify({numbers: '123'}));
+                    return JSON.stringify({numbers: 'numbers-stripped'});
+                })
+                .post('/post', { numbers: 'numbers-stripped' })
+                .reply(200, { 'hock': 'ok' });
+
+            catchErrors(done, () => {
+                request({
+                    uri: 'http://localhost:' + this.port + '/post',
+                    method: 'POST',
+                    json: { numbers: '123' }
+                }, (err, res, body) => {
+                    expect(err).toBeFalsy();
+                    expect(res).not.toBe(undefined);
+                    expect(res.statusCode).toEqual(200);
+                    expect(body).toEqual({ 'hock': 'ok' });
+
+                    done();
+                });
+            });
+        });
+    });
+
     describe("test if route exists", function() {
         beforeEach(function(done) {
             this.port = createPort();
