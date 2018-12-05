@@ -410,4 +410,30 @@ describe('Hock HTTP Tests', function() {
             });
         });
     });
+
+    describe("when throwOnUnmatched is set to false", function() {
+        beforeEach(function(done) {
+            this.port = createPort();
+            this.hockInstance = hock.createHock({throwOnUnmatched: false});
+            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+        });
+
+        afterEach(function(done) {
+            this.httpServer.close(done);
+        });
+
+        it('should correctly respond to a missing request', function(done) {
+            catchErrors(done, () => {
+                request('http://localhost:' + this.port + '/notUrl',
+                    (err, res, body) => {
+                        expect(err).toBeFalsy();
+                        expect(res).not.toBe(undefined);
+                        expect(res.headers['content-type']).toEqual("text/plain");
+                        expect(res.statusCode).toEqual(404);
+                        expect(body).toEqual("No Matching Response!\n");
+                        done();
+                    });
+            });
+        });
+    });
 });
