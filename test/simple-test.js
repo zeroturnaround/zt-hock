@@ -322,8 +322,9 @@ describe('Hock HTTP Tests', function() {
 
         it('should correctly use functions', function(done) {
             this.hockInstance
-                .filteringRequestBody(function(body) {
+                .filteringRequestBody(function({body, url}) {
                     expect(body).toEqual(JSON.stringify({numbers: '123'}));
+                    expect(url).toEqual("/post");
                     return JSON.stringify({numbers: 'numbers-stripped'});
                 })
                 .post('/post', { numbers: 'numbers-stripped' })
