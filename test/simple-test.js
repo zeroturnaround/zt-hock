@@ -217,6 +217,14 @@ describe('Hock HTTP Tests', function() {
                 });
         });
 
+        it('unmatched requests should show up with getUnusedAssertions()', function() {
+            this.hockInstance
+                .head('/head')
+                .reply(200, '', { 'Content-Type': 'plain/text' });
+
+            expect(this.hockInstance.getUnusedAssertions().length).toBe(1);
+        });
+
         it('should work with a delay configured', function(done) {
             this.hockInstance
                 .get('/url')
