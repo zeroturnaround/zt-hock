@@ -1,7 +1,7 @@
 {
   "name": "zt-hock",
   "description": "A mocking server for HTTP requests, forked from Hock",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Joachim Seminck <joachim@seminck.be>",
   "contributors": [
     {
