@@ -22,7 +22,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-config-zt": "^2.0.0",
-    "jest": "19.0.0",
+    "jest": "24.8.0",
     "request": "^2.81.0"
   },
   "main": "./lib/hock",
