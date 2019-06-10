@@ -1,7 +1,7 @@
 const Request = require('../lib/request');
 
-describe('request', function() {
-    it('should work with defined headers in the incoming request', function() {
+describe('request', () => {
+    it('should work with defined headers in the incoming request', () => {
         const request = new Request({}, {
             method: 'GET',
             url: '/lowercasetest',
@@ -15,7 +15,7 @@ describe('request', function() {
         }));
     });
 
-    it('should work with defined headers in the incoming request', function() {
+    it('should work with defined headers in the incoming request', () => {
         const request = new Request({}, {
             method: 'GET',
             url: '/lowercasetest',

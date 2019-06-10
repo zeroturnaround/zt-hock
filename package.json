@@ -19,11 +19,11 @@
     "test"
   ],
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.0.0",
-    "eslint-config-zt": "^1.4.0",
-    "jest": "19.0.0",
-    "request": "^2.81.0"
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-zt": "^2.0.0",
+    "jest": "24.8.0",
+    "request": "^2.88.0"
   },
   "main": "./lib/hock",
   "scripts": {
@@ -31,7 +31,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "deep-equal": "0.2.1"
+    "deep-equal": "1.0.1"
   },
   "jest": {
     "roots": [
