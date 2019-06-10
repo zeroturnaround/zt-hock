@@ -7,27 +7,33 @@ const {
     createPort
 } = require("./util.js");
 
-describe("min() and max() with replyWithFile", function() {
-    beforeEach(function(done) {
-        this.port = createPort();
-        this.hockInstance = hock.createHock();
-        this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+describe("min() and max() with replyWithFile", () => {
+    let testContext;
+
+    beforeEach(() => {
+        testContext = {};
     });
 
-    afterEach(function(done) {
-        this.httpServer.close(done);
+    beforeEach(done => {
+        testContext.port = createPort();
+        testContext.hockInstance = hock.createHock();
+        testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
     });
 
-    it('should succeed with a single call', function(done) {
-        this.hockInstance
+    afterEach(done => {
+        testContext.httpServer.close(done);
+    });
+
+    it('should succeed with a single call', done => {
+        testContext.hockInstance
             .get('/url')
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
         catchErrors(done, () => {
-            request('http://localhost:' + this.port + '/url', (err, res, body) => {
+            request('http://localhost:' + testContext.port + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-                this.hockInstance.done((err) => {
+                testContext.hockInstance.done((err) => {
                     expect(err).toBeFalsy();
                     done();
                 });
@@ -35,21 +41,21 @@ describe("min() and max() with replyWithFile", function() {
         });
     });
 
-    it('should succeed with a multiple calls', function(done) {
-        this.hockInstance
+    it('should succeed with a multiple calls', done => {
+        testContext.hockInstance
             .get('/url')
             .twice()
             .replyWithFile(200, process.cwd() + '/test/data/hello.txt');
 
         catchErrors(done, () => {
-            request('http://localhost:' + this.port + '/url', (err, res, body) => {
+            request('http://localhost:' + testContext.port + '/url', (err, res, body) => {
                 expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
                 catchErrors(done, () => {
-                    request('http://localhost:' + this.port + '/url', (err, res, body) => {
+                    request('http://localhost:' + testContext.port + '/url', (err, res, body) => {
                         expectResponse(err, res, body, {statusCode: 200, expectedBody: 'this\nis\nmy\nsample\n'});
 
-                        this.hockInstance.done((err) => {
+                        testContext.hockInstance.done((err) => {
                             expect(err).toBeFalsy();
                             done();
                         });

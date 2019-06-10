@@ -6,25 +6,31 @@ const {
     createPort
 } = require("./util.js");
 
-describe('Hock HTTP Tests', function() {
-    describe("with available ports", function() {
-        beforeEach(function(done) {
-            this.port = createPort();
-            this.hockInstance = hock.createHock();
-            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+describe('Hock HTTP Tests', () => {
+    let testContext;
+
+    beforeEach(() => {
+        testContext = {};
+    });
+
+    describe("with available ports", () => {
+        beforeEach(done => {
+            testContext.port = createPort();
+            testContext.hockInstance = hock.createHock();
+            testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
         });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+        afterEach(done => {
+            testContext.httpServer.close(done);
         });
 
-        it('should correctly respond to an HTTP GET request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP GET request', done => {
+            testContext.hockInstance
                 .get('/url')
                 .reply(200, { 'hock': 'ok' });
 
             catchErrors(done, () => {
-                request('http://localhost:' + this.port + '/url', (err, res, body) => {
+                request('http://localhost:' + testContext.port + '/url', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -34,14 +40,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP POST request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP POST request', done => {
+            testContext.hockInstance
                 .post('/post', { 'hock': 'post' })
                 .reply(201, { 'hock': 'created' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/post',
+                    uri: 'http://localhost:' + testContext.port + '/post',
                     method: 'POST',
                     json: {
                         'hock': 'post'
@@ -57,14 +63,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('does not care about the order of the keys in the body', function(done) {
-            this.hockInstance
+        it('does not care about the order of the keys in the body', done => {
+            testContext.hockInstance
                 .post('/post', { keyOne: 'value1', keyTwo: 'value2' })
                 .reply(201, { 'hock': 'created' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/post',
+                    uri: 'http://localhost:' + testContext.port + '/post',
                     method: 'POST',
                     json: {
                         keyTwo: 'value2',
@@ -81,14 +87,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP PUT request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP PUT request', done => {
+            testContext.hockInstance
                 .put('/put', { 'hock': 'put' })
                 .reply(204, { 'hock': 'updated' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/put',
+                    uri: 'http://localhost:' + testContext.port + '/put',
                     method: 'PUT',
                     json: {
                         'hock': 'put'
@@ -104,14 +110,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP PATCH request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP PATCH request', done => {
+            testContext.hockInstance
                 .patch('/patch', { 'hock': 'patch' })
                 .reply(204, { 'hock': 'updated' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/patch',
+                    uri: 'http://localhost:' + testContext.port + '/patch',
                     method: 'PATCH',
                     json: {
                         'hock': 'patch'
@@ -127,14 +133,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP DELETE request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP DELETE request', done => {
+            testContext.hockInstance
                 .delete('/delete')
                 .reply(202, { 'hock': 'deleted' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/delete',
+                    uri: 'http://localhost:' + testContext.port + '/delete',
                     method: 'DELETE'
                 }, (err, res, body) => {
                     expect(err).toBeFalsy();
@@ -147,14 +153,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP HEAD request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP HEAD request', done => {
+            testContext.hockInstance
                 .head('/head')
                 .reply(200, '', { 'content-type': 'plain/text' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/head',
+                    uri: 'http://localhost:' + testContext.port + '/head',
                     method: 'HEAD'
                 }, (err, res, body) => {
                     expect(err).toBeFalsy();
@@ -168,14 +174,14 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly respond to an HTTP COPY request', function(done) {
-            this.hockInstance
+        it('should correctly respond to an HTTP COPY request', done => {
+            testContext.hockInstance
                 .copy('/copysrc')
                 .reply(204);
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/copysrc',
+                    uri: 'http://localhost:' + testContext.port + '/copysrc',
                     method: 'COPY'
                 }, (err, res, body) => {
                     expect(err).toBeFalsy();
@@ -188,16 +194,16 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('unmatched requests should throw', function(done) {
-            this.hockInstance
+        it('unmatched requests should throw', done => {
+            testContext.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
-            expect(() => this.hockInstance.done()).toThrow();
+            expect(() => testContext.hockInstance.done()).toThrow();
             done();
         });
 
-        it('unmatched requests should NOT throw when configured', function(done) {
+        it('unmatched requests should NOT throw when configured', done => {
             const hockInstance = hock.createHock({throwOnUnprocessedRequests: false});
 
             hockInstance
@@ -207,8 +213,8 @@ describe('Hock HTTP Tests', function() {
             expect(() => hockInstance.done(() => done())).not.toThrow();
         });
 
-        it('unmatched requests should call done callback with err', function(done) {
-            this.hockInstance
+        it('unmatched requests should call done callback with err', done => {
+            testContext.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' })
                 .done((err) => {
@@ -217,22 +223,22 @@ describe('Hock HTTP Tests', function() {
                 });
         });
 
-        it('unmatched requests should show up with getUnusedAssertions()', function() {
-            this.hockInstance
+        it('unmatched requests should show up with getUnusedAssertions()', () => {
+            testContext.hockInstance
                 .head('/head')
                 .reply(200, '', { 'Content-Type': 'plain/text' });
 
-            expect(this.hockInstance.getUnusedAssertions().length).toBe(1);
+            expect(testContext.hockInstance.getUnusedAssertions().length).toBe(1);
         });
 
-        it('should work with a delay configured', function(done) {
-            this.hockInstance
+        it('should work with a delay configured', done => {
+            testContext.hockInstance
                 .get('/url')
                 .delay(1000)
                 .reply(200, { 'hock': 'ok' });
 
             catchErrors(done, () => {
-                request('http://localhost:' + this.port + '/url', (err, res, body) => {
+                request('http://localhost:' + testContext.port + '/url', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -244,25 +250,25 @@ describe('Hock HTTP Tests', function() {
         });
     });
 
-    describe("dynamic path replacing / filtering", function() {
-        beforeEach(function(done) {
-            this.port = createPort();
-            this.hockInstance = hock.createHock();
-            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+    describe("dynamic path replacing / filtering", () => {
+        beforeEach(done => {
+            testContext.port = createPort();
+            testContext.hockInstance = hock.createHock();
+            testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
         });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+        afterEach(done => {
+            testContext.httpServer.close(done);
         });
 
-        it('should correctly use regex', function(done) {
-            this.hockInstance
+        it('should correctly use regex', done => {
+            testContext.hockInstance
                 .filteringPathRegEx(/password=[^&]*/g, 'password=XXX')
                 .get('/url?password=XXX')
                 .reply(200, { 'hock': 'ok' });
 
             catchErrors(done, () => {
-                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
+                request('http://localhost:' + testContext.port + '/url?password=artischocko', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -273,8 +279,8 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly use functions', function(done) {
-            this.hockInstance
+        it('should correctly use functions', done => {
+            testContext.hockInstance
                 .filteringPath(function(p) {
                     expect(p).toEqual('/url?password=artischocko');
                     return '/url?password=XXX';
@@ -283,7 +289,7 @@ describe('Hock HTTP Tests', function() {
                 .reply(200, { 'hock': 'ok' });
 
             catchErrors(done, () => {
-                request('http://localhost:' + this.port + '/url?password=artischocko', (err, res, body) => {
+                request('http://localhost:' + testContext.port + '/url?password=artischocko', (err, res, body) => {
                     expect(err).toBeFalsy();
                     expect(res).not.toBe(undefined);
                     expect(res.statusCode).toEqual(200);
@@ -295,26 +301,26 @@ describe('Hock HTTP Tests', function() {
         });
     });
 
-    describe("dynamic request body replacing / filtering", function() {
-        beforeEach(function(done) {
-            this.port = createPort();
-            this.hockInstance = hock.createHock();
-            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+    describe("dynamic request body replacing / filtering", () => {
+        beforeEach(done => {
+            testContext.port = createPort();
+            testContext.hockInstance = hock.createHock();
+            testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
         });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+        afterEach(done => {
+            testContext.httpServer.close(done);
         });
 
-        it('should correctly use regex', function(done) {
-            this.hockInstance
+        it('should correctly use regex', done => {
+            testContext.hockInstance
                 .filteringRequestBodyRegEx(/\d{3}/, 'numbers-stripped')
                 .post('/post', { numbers: 'numbers-stripped' })
                 .reply(200, { 'hock': 'ok' });
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/post',
+                    uri: 'http://localhost:' + testContext.port + '/post',
                     method: 'POST',
                     json: { numbers: '123' }
                 }, (err, res, body) => {
@@ -328,8 +334,8 @@ describe('Hock HTTP Tests', function() {
             });
         });
 
-        it('should correctly use functions', function(done) {
-            this.hockInstance
+        it('should correctly use functions', done => {
+            testContext.hockInstance
                 .filteringRequestBody(function({body, url}) {
                     expect(body).toEqual(JSON.stringify({numbers: '123'}));
                     expect(url).toEqual("/post");
@@ -340,7 +346,7 @@ describe('Hock HTTP Tests', function() {
 
             catchErrors(done, () => {
                 request({
-                    uri: 'http://localhost:' + this.port + '/post',
+                    uri: 'http://localhost:' + testContext.port + '/post',
                     method: 'POST',
                     json: { numbers: '123' }
                 }, (err, res, body) => {
@@ -355,33 +361,33 @@ describe('Hock HTTP Tests', function() {
         });
     });
 
-    describe("test if route exists", function() {
-        beforeEach(function(done) {
-            this.port = createPort();
-            this.hockInstance = hock.createHock();
-            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+    describe("test if route exists", () => {
+        beforeEach(done => {
+            testContext.port = createPort();
+            testContext.hockInstance = hock.createHock();
+            testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
         });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+        afterEach(done => {
+            testContext.httpServer.close(done);
         });
 
-        it('should allow testing for url', function(done) {
-            this.hockInstance
+        it('should allow testing for url', done => {
+            testContext.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .get('/arti')
                 .reply(200, { 'hock': 'ok' });
 
-            expect(this.hockInstance.hasRoute('GET', '/url?password=foo')).toEqual(true);
-            expect(this.hockInstance.hasRoute('GET', '/arti')).toEqual(true);
-            expect(this.hockInstance.hasRoute('GET', '/notexist')).toEqual(false);
+            expect(testContext.hockInstance.hasRoute('GET', '/url?password=foo')).toEqual(true);
+            expect(testContext.hockInstance.hasRoute('GET', '/arti')).toEqual(true);
+            expect(testContext.hockInstance.hasRoute('GET', '/notexist')).toEqual(false);
 
             done();
         });
 
-        it('matches the header', function(done) {
-            this.hockInstance
+        it('matches the header', done => {
+            testContext.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .get('/artischocko', { 'foo-type': 'artischocke' })
@@ -389,19 +395,19 @@ describe('Hock HTTP Tests', function() {
 
             catchErrors(done, () => {
                 expect(
-                    this.hockInstance.hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
+                    testContext.hockInstance.hasRoute('GET', '/bla?password=foo', null, { 'content-type': 'plain/text' })
                 ).toEqual(false);
 
                 expect(
-                    this.hockInstance.hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
+                    testContext.hockInstance.hasRoute('GET', '/artischocko', null, { 'foo-type': 'artischocke' })
                 ).toEqual(true);
 
                 done();
             });
         });
 
-        it('matches the body', function(done) {
-            this.hockInstance
+        it('matches the body', done => {
+            testContext.hockInstance
                 .get('/url?password=foo')
                 .reply(200, { 'hock': 'ok' })
                 .post('/artischocko', 'enteente')
@@ -409,10 +415,10 @@ describe('Hock HTTP Tests', function() {
 
             catchErrors(done, () => {
                 expect(
-                    this.hockInstance.hasRoute('GET', '/bla?password=foo', 'testing')
+                    testContext.hockInstance.hasRoute('GET', '/bla?password=foo', 'testing')
                 ).toEqual(false);
                 expect(
-                    this.hockInstance.hasRoute('POST', '/artischocko', 'enteente')
+                    testContext.hockInstance.hasRoute('POST', '/artischocko', 'enteente')
                 ).toEqual(true);
 
                 done();
@@ -420,20 +426,20 @@ describe('Hock HTTP Tests', function() {
         });
     });
 
-    describe("when throwOnUnmatched is set to false", function() {
-        beforeEach(function(done) {
-            this.port = createPort();
-            this.hockInstance = hock.createHock({throwOnUnmatched: false});
-            this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+    describe("when throwOnUnmatched is set to false", () => {
+        beforeEach(done => {
+            testContext.port = createPort();
+            testContext.hockInstance = hock.createHock({throwOnUnmatched: false});
+            testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
         });
 
-        afterEach(function(done) {
-            this.httpServer.close(done);
+        afterEach(done => {
+            testContext.httpServer.close(done);
         });
 
-        it('should correctly respond to a missing request', function(done) {
+        it('should correctly respond to a missing request', done => {
             catchErrors(done, () => {
-                request('http://localhost:' + this.port + '/notUrl',
+                request('http://localhost:' + testContext.port + '/notUrl',
                     (err, res, body) => {
                         expect(err).toBeFalsy();
                         expect(res).not.toBe(undefined);

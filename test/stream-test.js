@@ -10,15 +10,21 @@ const {
     createPort
 } = require("./util.js");
 
-describe("min() and max() with reply (with stream)", function() {
-    beforeEach(function(done) {
-        this.port = createPort();
-        this.hockInstance = hock.createHock();
-        this.httpServer = createHttpServer(this.hockInstance, this.port, done);
+describe("min() and max() with reply (with stream)", () => {
+    let testContext;
+
+    beforeEach(() => {
+        testContext = {};
     });
 
-    afterEach(function(done) {
-        this.httpServer.close(done);
+    beforeEach(done => {
+        testContext.port = createPort();
+        testContext.hockInstance = hock.createHock();
+        testContext.httpServer = createHttpServer(testContext.hockInstance, testContext.port, done);
+    });
+
+    afterEach(done => {
+        testContext.httpServer.close(done);
     });
 
     function RandomStream(size, opt) {
@@ -53,16 +59,16 @@ describe("min() and max() with reply (with stream)", function() {
 
     // NOTE: We need to specify encoding: null in requests below to ensure that the response is
     // not encoded as a utf8 string (we want the binary contents from the readstream returned.)
-    it('should succeed with a single call', function(done) {
-        this.hockInstance
+    it('should succeed with a single call', done => {
+        testContext.hockInstance
             .get('/url')
             .reply(200, new RandomStream(streamLen));
 
         catchErrors(done, () => {
-            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
+            request({'url': 'http://localhost:' + testContext.port + '/url', 'encoding': null}, (err, res, body) => {
                 expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-                this.hockInstance.done((err) => {
+                testContext.hockInstance.done((err) => {
                     expect(err).toBeFalsy();
                     done();
                 });
@@ -70,21 +76,21 @@ describe("min() and max() with reply (with stream)", function() {
         });
     });
 
-    it('should succeed with a multiple calls', function(done) {
-        this.hockInstance
+    it('should succeed with a multiple calls', done => {
+        testContext.hockInstance
             .get('/url')
             .twice()
             .reply(200, new RandomStream(streamLen));
 
         catchErrors(done, () => {
-            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
+            request({'url': 'http://localhost:' + testContext.port + '/url', 'encoding': null}, (err, res, body) => {
                 expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
                 catchErrors(done, () => {
-                    request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body) => {
+                    request({'url': 'http://localhost:' + testContext.port + '/url', 'encoding': null}, (err, res, body) => {
                         expectResponse(err, res, body.length, {statusCode: 200, expectedBody: streamLen});
 
-                        this.hockInstance.done((err) => {
+                        testContext.hockInstance.done((err) => {
                             expect(err).toBeFalsy();
                             done();
                         });
@@ -94,23 +100,23 @@ describe("min() and max() with reply (with stream)", function() {
         });
     });
 
-    it('should have matching body with multiple calls', function(done) {
-        this.hockInstance
+    it('should have matching body with multiple calls', done => {
+        testContext.hockInstance
             .get('/url')
             .twice()
             .reply(200, new RandomStream(1000));
 
         catchErrors(done, () => {
-            request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body1) => {
+            request({'url': 'http://localhost:' + testContext.port + '/url', 'encoding': null}, (err, res, body1) => {
                 expectResponse(err, res, body1.length, {statusCode: 200, expectedBody: 1000});
 
                 catchErrors(done, () => {
-                    request({'url': 'http://localhost:' + this.port + '/url', 'encoding': null}, (err, res, body2) => {
+                    request({'url': 'http://localhost:' + testContext.port + '/url', 'encoding': null}, (err, res, body2) => {
                         expectResponse(err, res, body2.length, {statusCode: 200, expectedBody: 1000});
 
                         expect(body1.toString()).toEqual(body2.toString());
 
-                        this.hockInstance.done((err) => {
+                        testContext.hockInstance.done((err) => {
                             expect(err).toBeFalsy();
                             done();
                         });
