@@ -1,4 +1,4 @@
-# zt-hock [![Build Status](https://travis-ci.org/zeroturnaround/zt-hock.svg?branch=master)](https://travis-ci.org/zeroturnaround/zt-hock) [![Coverage Status](https://coveralls.io/repos/github/zeroturnaround/zt-hock/badge.svg?branch=master)](https://coveralls.io/github/zeroturnaround/zt-hock?branch=master)
+# zt-hock [![Build Status](https://travis-ci.org/zeroturnaround/zt-hock.svg?branch=master)](https://travis-ci.org/zeroturnaround/zt-hock) [![NPM build](https://img.shields.io/npm/v/zt-hock.svg)](https://img.shields.io/npm/v/zt-hock.svg) [![Coverage Status](https://coveralls.io/repos/github/zeroturnaround/zt-hock/badge.svg?branch=master)](https://coveralls.io/github/zeroturnaround/zt-hock?branch=master)
 
 An HTTP mocking server forked from [Hock](https://github.com/mmalecki/hock), which itself is based on
 a project called [Nock](https://github.com/flatiron/nock).
